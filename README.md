@@ -1,8 +1,41 @@
-# local-search-lab-CS4660
-ARTIFICIAL INTELLIGENCE CS 4660-01 
-Week 4 Lab – Written Answers
-Name: Rojina Zalzar
+# Local Search Lab: Traveling Salesman Problem
 
-My reflection on the lab
+In this lab, I implemented and tested several local-search algorithms for the Traveling Salesman Problem (TSP). The goal was to find short routes through a set of U.S. state capitals by comparing different search strategies that improve a route without checking every possible route.
 
-In this notebook, the Traveling Salesman Problem is represented as a closed tour of named cities with coordinate pairs, and the utility is the negative Euclidean distance of the full route, including the return from the last city to the first, so shorter tours have higher utility. The neighborhood is created by reversing a segment between two positions in the path; `successors()` creates all such neighboring tours, while `get_successor()` selects one random segment reversal. A problem I ran into while implementing the code was making sure that every algorithm used the same utility direction: because the assignment seeks the shortest route but the solvers select the highest utility, the route distance had to be negated. I also had to ensure that the successor functions created new problem objects instead of changing the current path, that the return edge from the final city to the first city was included, and that simulated annealing handled worse moves safely through its temperature-based acceptance probability. Hill climbing repeatedly chooses the highest-utility neighbor and stops when no strict improvement is available or the epoch limit is reached, so it finds a locally improved result but does not guarantee the global optimum. Local beam search starts with several shuffled copies of the problem, gathers successors from every current state, and retains the best states up to the beam width while tracking the best result found. Simulated annealing uses the exponential schedule `initial_temperature * alpha ** time`, always accepts better moves, and can accept worse moves with probability `exp(delta_e / temperature)`, making those moves less likely as temperature decreases. Late-acceptance hill climbing chooses the best neighbor and accepts it when it is at least as good as the current state or the corresponding value in a fixed history array, which can allow some non-improving moves. Because none of these implementations calculates an exact optimal TSP solution, their returned tours should be understood as approximate solutions produced by different local-search strategies.
+## Tools and Concepts Used
+
+- Python and a Jupyter Notebook  
+- City names and coordinate pairs representing U.S. state capitals  
+- Euclidean distance to calculate the distance between cities  
+- A closed tour, including the return trip from the final city back to the starting city  
+- Route utility, represented as the negative total distance so that shorter paths have higher utility  
+- Segment reversal to create neighboring routes  
+- Randomized starting paths and random successor generation  
+
+The main algorithms used were:
+
+- Hill Climbing  
+- Local Beam Search  
+- Simulated Annealing  
+- Late-Acceptance Hill Climbing (LAHC)  
+
+## What I Did
+
+I created a `TravelingSalesmanProblem` representation where a solution is a route that visits every city once and then returns to the starting city. I calculated the total route distance using Euclidean distance between city coordinates. Because the algorithms select solutions with the highest utility, I used the negative distance as the utility value. This made shorter routes produce better utility scores.
+
+I implemented successor functions that create new possible routes by reversing a section of the current path. The `successors()` function generates all valid segment-reversal neighbors, while `get_successor()` selects one random neighbor. I made sure these functions created new problem objects instead of changing the current route directly.
+
+I then implemented and tested four local-search solvers:
+
+- **Hill Climbing:** Repeatedly selected the best neighboring route and stopped when no strictly better route was available or when it reached the epoch limit. This improved the route locally, but it could stop at a local optimum instead of the best possible route.
+- **Local Beam Search:** Started with several randomized routes, generated successors from all current routes, and kept only the best routes based on the beam width. This allowed the search to explore several possible route areas at the same time.
+- **Simulated Annealing:** Always accepted improvements but sometimes accepted worse routes based on temperature and probability. I used the schedule `initial_temperature * alpha ** time`, so worse moves became less likely as the temperature decreased.
+- **Late-Acceptance Hill Climbing:** Selected the best neighbor and compared it with both the current solution and an earlier value stored in a fixed history array. This allowed some non-improving moves and helped the algorithm avoid getting stuck too quickly.
+
+## What I Learned
+
+This lab showed that local-search algorithms can find useful approximate solutions to difficult optimization problems, even when finding the exact best solution would take too much time. Each algorithm uses a different approach to avoid or reduce the problem of getting stuck in poor local solutions.
+
+I also learned that it is important to keep the direction of the evaluation consistent. The assignment searched for the shortest route, but the solvers chose the highest utility, so I needed to negate the route distance. Other important details included counting the final return edge to the starting city and safely handling worse moves in simulated annealing using the temperature-based acceptance probability.
+
+The results from these algorithms are approximate routes, not guaranteed optimal TSP solutions.
