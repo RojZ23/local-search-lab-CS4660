@@ -1,4 +1,4 @@
-# local-search-lab-CS4661
+# local-search-lab-CS4660
 ARTIFICIAL INTELLIGENCE CS 4660-01 
 Week 4 Lab – Written Answers
 Name: Rojina Zalzar
